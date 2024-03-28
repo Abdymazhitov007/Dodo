@@ -44,12 +44,11 @@ public class JwtProvider {
 
         try {
 
-            Claims claims;
-            claims = Jwts.parser().setSigningKey(authKey)
+            Claims claims = Jwts.parser().setSigningKey(authKey)
                     .parseClaimsJws(token).getBody();
             if (claims != null) {
 
-                return (Long) claims.get("userId");
+                return Long.valueOf(String.valueOf(claims.get("userId")));
 
             } else {
                 throw new RuntimeException("Токен пустой");

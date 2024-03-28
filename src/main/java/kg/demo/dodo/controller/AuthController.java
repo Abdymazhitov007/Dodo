@@ -15,15 +15,17 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    ResponseEntity<?> auth(@RequestBody AuthRequest request ){
+    public ResponseEntity<?> auth(@RequestBody AuthRequest request) {
         return ResponseEntity.ok(authService.auth(request));
     }
 
     @GetMapping("/check")
-    ResponseEntity<?> validate(@RequestBody ValidateEmailReq emailReq){
+    public ResponseEntity<?> validate(@RequestBody ValidateEmailReq emailReq) {
         return ResponseEntity.ok(authService.validate(emailReq));
     }
 
-
-
+    @GetMapping("getId")
+    public ResponseEntity<?> getIdByToken(@RequestHeader String token) {
+        return ResponseEntity.ok(authService.getUserIdByToken(token));
+    }
 }

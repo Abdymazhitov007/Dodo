@@ -83,8 +83,8 @@ public class AuthServiceImpl implements AuthService {
         //найти в базе данных в таблице accounts запись по email
         AccountDTO accountDTO = accountService.findByEmail(request.getEmail());
         //сравнение пароля из реквеста и из бд
-        if (request.getPassword().equals(accountDTO.getTempPassword())) {
-            if (Duration.between(accountDTO.getDateTimeOfPassword(), LocalDateTime.now()).toMinutes() <= 1) {
+        if (request.getPassword().equals(accountDTO.getTempPassword()) && !accountDTO.isApproved()) {
+            if (Duration.between(accountDTO.getDateTimeOfPassword(), LocalDateTime.now()).toMinutes() <= 5) {
 
                 accountDTO.setApproved(true);
                 accountService.update(accountDTO);
@@ -104,5 +104,11 @@ public class AuthServiceImpl implements AuthService {
 
 
     }
+
+    @Override
+    public Long getUserIdByToken(String token) {
+        return jwtProvider.validateToken(token);
+    }
+
 
 }
