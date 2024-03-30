@@ -9,6 +9,8 @@ import kg.demo.dodo.service.AuthService;
 import kg.demo.dodo.service.MailService;
 import kg.demo.dodo.service.UserService;
 import kg.demo.dodo.util.JwtProvider;
+import kg.demo.dodo.util.Language;
+import kg.demo.dodo.util.ResourceBundleLanguage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,21 +28,16 @@ public class AuthServiceImpl implements AuthService {
     private final MailService mailService;
 
     @Override
-    public String auth(AuthRequest request) {
+    public String auth(AuthRequest request, int lang) {
 
-        //найти в базе данных в таблице accounts запись по email
         AccountDTO accountDTO = accountService.findByEmail(request.getEmail());
 
         Random random = new Random();
         int tempPsw = 100000 + random.nextInt(900000);
-
-        //если нет записи то дальше
-        //отправляем temp password на почту  temp password(567-123)
-        //создаем Account, сетим данные ( email, temp password, status new , add date, update date ) сохраняем account entity
-        //создаем User entity сетим все данные
+        String messageToSend = "your temporary password is " + String.valueOf(tempPsw);
 
         if (accountDTO == null) {
-            mailService.send(request.getEmail(), "your temporary password is " + String.valueOf(tempPsw));
+            mailService.send(request.getEmail(), messageToSend);
 
             AccountDTO newAccount = new AccountDTO();
             newAccount.setEmail(request.getEmail());
@@ -60,13 +57,8 @@ public class AuthServiceImpl implements AuthService {
 
         }
 
-        /*если запись есть
-        //отправляем temp password на почту  temp password(567-123)
-        находим аккаунт обновляем temp password
-        * */
-
         else {
-            mailService.send(request.getEmail(), "your temporary password is " + String.valueOf(tempPsw));
+            mailService.send(request.getEmail(), messageToSend);
             accountDTO.setTempPassword(tempPsw);
             accountDTO.setApproved(false);
             accountDTO.setDateTimeOfPassword(LocalDateTime.now());
@@ -74,15 +66,13 @@ public class AuthServiceImpl implements AuthService {
 
         }
 
-        return "OK";
+        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "ready");
 
     }
 
     @Override
     public String validate(ValidateEmailReq request) {
-        //найти в базе данных в таблице accounts запись по email
         AccountDTO accountDTO = accountService.findByEmail(request.getEmail());
-        //сравнение пароля из реквеста и из бд
         if (request.getPassword().equals(accountDTO.getTempPassword()) && !accountDTO.isApproved()) {
             if (Duration.between(accountDTO.getDateTimeOfPassword(), LocalDateTime.now()).toMinutes() <= 5) {
 
@@ -94,13 +84,6 @@ public class AuthServiceImpl implements AuthService {
 
             } else throw new RuntimeException("your password has expired");
         } else throw new RuntimeException("Incorrect password");
-        // если время отправленного пароля истекло (дается 10 мин) то кидаем ошибку
-        //если пароль неверный то кидаем ошибку
-        //если не прошло 10 минут и пароль верны идем дальше
-        //делаем статус у account (status approved)
-        //найти юзера по аккаунту
-        //формируем токен из userId и роли
-        //возвращаем токен
 
 
     }

@@ -8,6 +8,7 @@ import java.util.List;
 public class OrderCreateRequest {
 
     List<ProductOrderList> productOrderLists;
+    Long addressId;
     LocalDateTime orderDate;
     PaymentType paymentType;
 

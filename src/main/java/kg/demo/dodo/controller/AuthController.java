@@ -15,8 +15,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<?> auth(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.auth(request));
+    public ResponseEntity<?> auth(@RequestBody AuthRequest request, @RequestHeader int lang) {
+        return ResponseEntity.ok(authService.auth(request, lang));
     }
 
     @GetMapping("/check")

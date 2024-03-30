@@ -5,7 +5,7 @@ import kg.demo.dodo.model.requests.ValidateEmailReq;
 
 public interface AuthService {
 
-    String auth(AuthRequest request);
+    String auth(AuthRequest request, int lang);
 
     String validate(ValidateEmailReq request);
 

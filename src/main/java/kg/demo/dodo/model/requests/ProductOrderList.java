@@ -6,6 +6,6 @@ public class ProductOrderList {
 
     Long productSizeId;
     BigDecimal price;
-    boolean isPayed;
+
 
 }

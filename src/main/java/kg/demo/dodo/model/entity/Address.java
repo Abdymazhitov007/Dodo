@@ -19,8 +19,9 @@ public class Address extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
+    String city;
     String street;
-    Integer num;
+    String num;
     String comment;
 
     @ManyToOne

@@ -8,8 +8,9 @@ import lombok.EqualsAndHashCode;
 @Data
 public class AddressDTO extends BaseDTO {
 
+    String city;
     String street;
-    Integer num;
+    String num;
     String comment;
     UserDTO user;
 
