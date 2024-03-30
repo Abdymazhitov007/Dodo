@@ -4,6 +4,7 @@ import kg.demo.dodo.base.BaseServiceImpl;
 import kg.demo.dodo.mapper.SizeMapper;
 import kg.demo.dodo.model.dto.SizeDTO;
 import kg.demo.dodo.model.entity.Size;
+import kg.demo.dodo.model.response.SizeListResponse;
 import kg.demo.dodo.repository.SizeRep;
 import kg.demo.dodo.service.SizeService;
 import kg.demo.dodo.util.Language;
@@ -29,7 +30,7 @@ public class SizeServiceImpl extends BaseServiceImpl<Size, SizeRep, SizeDTO, Siz
     }
 
     @Override
-    public List<String> getSizeList() {
+    public List<SizeListResponse> getSizeList() {
         return rep.findALLName();
     }
 }
