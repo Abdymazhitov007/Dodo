@@ -150,17 +150,36 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         if (!orderDTO.getUser().getId().equals(userDTO.getId())) {
             throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "wrongOrderId"));
         }
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
+        orderCreateRequest.setAddressId(request.getAddressId());
+        orderCreateRequest.setPaymentType(request.getPaymentType());
+        orderCreateRequest.setOrderDate(request.getOrderDate());
 
         List<ProductOrderList> productOrderLists = new ArrayList<>();
+        for (OrderProductDTO item : getAllByOrderId(request.getOrderId())) {
+            ProductOrderList productOrderList = new ProductOrderList();
+            productOrderList.setPrice(item.getProductSize().getPrice());
+            productOrderList.setProductSizeId(item.getProductSize().getId());
+            productOrderLists.add(productOrderList);
+        }
+        orderCreateRequest.setProductOrderLists(productOrderLists);
 
+        create(orderCreateRequest, token, lang);
 
         return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing");
+    }
+
+    @Override
+    public List<OrderProductDTO> getAllByOrderId(Long orderId) {
+        return mapper.toDtos(rep.findAllByOrderId(orderId), context);
     }
 
     @Override
     public List<OrderProductDTO> getByOrderId(Long orderId) {
         return mapper.toDtos(rep.findByOrderId(orderId), context);
     }
+
+
 
 
 }

@@ -16,4 +16,6 @@ public interface OrderProductService  extends BaseService<OrderProductDTO> {
     List<OrderProductDTO> getByOrderId(Long orderId);
 
     String repeatOrder(String token, RepeatOrderRequest request, int lang);
+
+    List<OrderProductDTO> getAllByOrderId(Long orderId);
 }
