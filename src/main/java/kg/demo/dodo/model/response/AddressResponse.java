@@ -8,6 +8,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddressResponse {
 
+    Long id;
+    String city;
+    String street;
+    String num;
 
 
 }

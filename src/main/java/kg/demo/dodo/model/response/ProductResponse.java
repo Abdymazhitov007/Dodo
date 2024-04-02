@@ -1,16 +1,18 @@
-package kg.demo.dodo.model.requests;
+package kg.demo.dodo.model.response;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductOrderList {
+public class ProductResponse {
 
-    Long productSizeId;
+    Long id;
+    String name;
+    String category;
+    String size;
     Double price;
+
 
 }

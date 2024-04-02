@@ -1,6 +1,5 @@
-package kg.demo.dodo.model.requests;
+package kg.demo.dodo.model.response;
 
-import kg.demo.dodo.model.entity.enums.PaymentType;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,11 +9,12 @@ import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderCreateRequest {
+public class OrderStoryResponse {
 
-    List<ProductOrderList> productOrderLists;
-    Long addressId;
+    Long id;
     LocalDateTime orderDate;
-    PaymentType paymentType;
+    AddressResponse address;
+    List<ProductResponse> products;
+    Double totalPrice;
 
 }

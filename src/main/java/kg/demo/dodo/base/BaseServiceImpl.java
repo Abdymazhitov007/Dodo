@@ -1,6 +1,6 @@
 package kg.demo.dodo.base;
 
-import kg.demo.dodo.base.enums.Status;
+import kg.demo.dodo.model.entity.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.MappedSuperclass;

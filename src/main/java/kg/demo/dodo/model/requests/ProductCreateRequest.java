@@ -15,7 +15,7 @@ public class ProductCreateRequest {
     String description;
     Long categoryId;
     Long sizeId;
-    BigDecimal price;
+    Double price;
     MultipartFile logo;
 
 }

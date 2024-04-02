@@ -21,11 +21,11 @@ public class OrderProduct extends BaseEntity {
     Long id;
 
     @ManyToOne
-    ProductSize product;
+    ProductSize productSize;
 
     @ManyToOne
     Order order;
 
-    BigDecimal price;
+    Double price;
 
 }

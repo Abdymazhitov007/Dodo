@@ -52,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
             newUser.setName(request.getName());
             newUser.setPhone(request.getPhone());
             newUser.setAccount(newAccount);
+            newUser.setDodoCoins(0.0);
 
             userService.save(newUser);
 

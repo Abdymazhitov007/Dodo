@@ -1,16 +1,17 @@
 package kg.demo.dodo.model.requests;
 
+import kg.demo.dodo.model.dto.AccountDTO;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductOrderList {
+public class UserUpdateRequest {
 
-    Long productSizeId;
-    Double price;
+    Long id;
+    String phone;
+    String name;
+    Double dodoCoins;
 
 }

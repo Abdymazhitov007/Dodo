@@ -7,6 +7,7 @@ import kg.demo.dodo.model.dto.ProductDTO;
 import kg.demo.dodo.model.dto.ProductSizeDTO;
 import kg.demo.dodo.model.entity.ProductSize;
 import kg.demo.dodo.model.requests.ProductCreateRequest;
+import kg.demo.dodo.model.response.ProductListResponse;
 import kg.demo.dodo.model.response.ProductSizeListResponse;
 import kg.demo.dodo.repository.ProductSizeRep;
 import kg.demo.dodo.service.CategoryService;
@@ -41,23 +42,36 @@ public class ProductSizeServiceImpl extends BaseServiceImpl<ProductSize, Product
     }
 
     @Override
-    public String create(ProductCreateRequest request, int lang) {
+    public List<ProductListResponse> getProductList() {
+        return rep.findProductList();
+    }
 
-        ProductDTO product = new ProductDTO();
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
-        product.setLogo(fileService.upload(request.getLogo()).getDownloadUri());
-        product.setCategory(categoryService.findById(request.getCategoryId()));
+    @Override
+    public String create(ProductCreateRequest request, Long productId, int lang) {
 
-        ProductSizeDTO productSize = new ProductSizeDTO();
+        ProductDTO product;
 
-        productSize.setProduct(productService.save(product));
-        productSize.setSize(sizeService.findById(request.getSizeId()));
-        productSize.setPrice(request.getPrice());
+        if (productId == -1) {
 
-        save(productSize);
+            product = new ProductDTO();
+            product.setName(request.getName());
+            product.setDescription(request.getDescription());
+            product.setLogo(fileService.upload(request.getLogo()).getDownloadUri());
+            product.setCategory(categoryService.findById(request.getCategoryId()));
+            product = productService.save(product);
+        } else {
+            product = productService.findById(productId);
+        }
 
-        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityCreated");
+            ProductSizeDTO productSize = new ProductSizeDTO();
+
+            productSize.setProduct(product);
+            productSize.setSize(sizeService.findById(request.getSizeId()));
+            productSize.setPrice(request.getPrice());
+
+            save(productSize);
+
+            return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityCreated");
 
     }
 }

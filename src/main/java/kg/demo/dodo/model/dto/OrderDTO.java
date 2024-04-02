@@ -1,11 +1,11 @@
 package kg.demo.dodo.model.dto;
 
 import kg.demo.dodo.base.BaseDTO;
-import kg.demo.dodo.base.enums.PaymentType;
+import kg.demo.dodo.model.entity.enums.OrderStatus;
+import kg.demo.dodo.model.entity.enums.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -13,10 +13,12 @@ import java.time.LocalDateTime;
 public class OrderDTO extends BaseDTO {
 
     UserDTO user;
-    BigDecimal totalPrice;
-    Integer dodoCoins;
+    Double totalPrice;
+    Double dodoCoins;
     LocalDateTime orderDate;
-    BigDecimal discount;
+    AddressDTO address;
+    OrderStatus orderStatus;
+    Double discount;
     PaymentType paymentType;
 
 }

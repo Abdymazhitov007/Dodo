@@ -22,7 +22,7 @@ public class ProductSize extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    BigDecimal price;
+    Double price;
 
     @ManyToOne
     Product product;

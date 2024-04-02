@@ -16,13 +16,18 @@ public class ProductSizeController {
     private final ProductSizeService service;
 
     @PostMapping
-    public ResponseEntity<?> create(@ModelAttribute ProductCreateRequest request, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.create(request, lang));
+    public ResponseEntity<?> create(@ModelAttribute ProductCreateRequest request, @RequestParam(required = false, defaultValue = "-1") Long productId, @RequestHeader int lang) {
+        return ResponseEntity.ok(service.create(request, productId, lang));
     }
 
     @GetMapping
     public ResponseEntity<?> getProductSizeList() {
         return ResponseEntity.ok(service.getProductSizeList());
+    }
+
+    @GetMapping("/product-list")
+    public ResponseEntity<?> getProductList() {
+        return ResponseEntity.ok(service.getProductList());
     }
 
 }

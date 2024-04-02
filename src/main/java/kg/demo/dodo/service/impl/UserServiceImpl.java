@@ -4,6 +4,7 @@ import kg.demo.dodo.base.BaseServiceImpl;
 import kg.demo.dodo.mapper.UserMapper;
 import kg.demo.dodo.model.dto.UserDTO;
 import kg.demo.dodo.model.entity.User;
+import kg.demo.dodo.model.requests.UserUpdateRequest;
 import kg.demo.dodo.model.response.UserListResponse;
 import kg.demo.dodo.repository.UserRep;
 import kg.demo.dodo.service.UserService;
@@ -26,5 +27,17 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserRep, UserDTO, Use
     @Override
     public UserDTO getByAccountId(Long accountId) {
         return mapper.toDto(rep.findByAccount_Id(accountId), context);
+    }
+
+
+    @Override
+    public UserDTO update(UserUpdateRequest request) {
+
+        UserDTO userDTO = findById(request.getId());
+        userDTO.setDodoCoins(request.getDodoCoins());
+        userDTO.setName(request.getName());
+        userDTO.setPhone(request.getPhone());
+
+        return super.update(userDTO);
     }
 }

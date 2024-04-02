@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_user")
@@ -20,11 +22,8 @@ public class User extends BaseEntity {
 
     String phone;
     String name;
-    Integer dodoCoins;
+    Double dodoCoins;
 
     @OneToOne
     Account account;
-
-
-
 }

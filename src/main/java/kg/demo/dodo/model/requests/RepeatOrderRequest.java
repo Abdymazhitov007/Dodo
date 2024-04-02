@@ -6,13 +6,12 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderCreateRequest {
+public class RepeatOrderRequest {
 
-    List<ProductOrderList> productOrderLists;
+    Long orderId;
     Long addressId;
     LocalDateTime orderDate;
     PaymentType paymentType;
