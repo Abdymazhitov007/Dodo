@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 public class ProductOrderList {
 
     Long productSizeId;
+
+    Integer quantity;
+
     Double price;
 
 }

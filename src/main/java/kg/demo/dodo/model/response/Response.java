@@ -1,19 +1,16 @@
 package kg.demo.dodo.model.response;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductResponse {
+public class Response<I> {
 
-    Long id;
-    String name;
-    String category;
-    String size;
-    Integer quantity;
-    Double price;
-
+    I data;
+    String message;
 
 }

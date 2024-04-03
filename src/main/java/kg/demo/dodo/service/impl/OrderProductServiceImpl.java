@@ -11,6 +11,7 @@ import kg.demo.dodo.model.requests.RepeatOrderRequest;
 import kg.demo.dodo.model.response.AddressResponse;
 import kg.demo.dodo.model.response.OrderStoryResponse;
 import kg.demo.dodo.model.response.ProductResponse;
+import kg.demo.dodo.model.response.Response;
 import kg.demo.dodo.repository.OrderProductRep;
 import kg.demo.dodo.service.*;
 import kg.demo.dodo.util.Language;
@@ -31,7 +32,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
     private final UserService userService;
     private final ProductSizeService productSizeService;
     private final AddressService addressService;
-    private final ProductService productService;
+
 
 
     public OrderProductServiceImpl(OrderProductRep rep, OrderProductMapper mapper, AuthService authService, OrderService orderService, UserService userService, ProductSizeService productSizeService, AddressService addressService, ProductService productService) {
@@ -41,11 +42,10 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         this.userService = userService;
         this.productSizeService = productSizeService;
         this.addressService = addressService;
-        this.productService = productService;
     }
 
     @Override
-    public String create(OrderCreateRequest request, String token, int lang) {
+    public Response<OrderStoryResponse> create(OrderCreateRequest request, String token, int lang) {
 
         UserDTO user = userService.findById(authService.getUserIdByToken(token));
         Double totalPrice = 0.0;
@@ -74,7 +74,12 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
                 discount += product.getPrice() / 10 + product.getPrice();
                 order.setDiscount(order.getDiscount() + product.getPrice());
             }
-            totalPrice += product.getPrice();
+
+
+            if (item.getQuantity() < 1) {
+                throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "quantityLessOne"));
+            }
+            totalPrice += product.getPrice() * item.getQuantity();
         }
 
         order.setTotalPrice(totalPrice);
@@ -90,6 +95,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         for (ProductOrderList item : request.getProductOrderLists()) {
             OrderProductDTO orderProductDTO = new OrderProductDTO();
             orderProductDTO.setOrder(orderFromDB);
+            orderProductDTO.setQuantity(item.getQuantity());
 
             ProductSizeDTO product = productSizeService.findById(item.getProductSizeId());
             orderProductDTO.setProductSize(product);
@@ -98,8 +104,11 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
             save(orderProductDTO);
         }
 
+        Response<OrderStoryResponse> response = new Response<>();
+        response.setData(toOrderStoryResponse(orderFromDB.getId()));
+        response.setMessage(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing"));
 
-        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing");
+        return response;
     }
 
     @Override
@@ -128,6 +137,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
                 ProductResponse productResponse = new ProductResponse();
                 productResponse.setId(x.getProductSize().getId());
                 productResponse.setName(x.getProductSize().getProduct().getName());
+                productResponse.setQuantity(x.getQuantity());
                 productResponse.setPrice(x.getProductSize().getPrice());
                 productResponse.setSize(x.getProductSize().getSize().getName());
                 productResponse.setCategory(x.getProductSize().getProduct().getCategory().getName());
@@ -142,14 +152,17 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         return result;
     }
 
+
+
     @Override
-    public String repeatOrder(String token, RepeatOrderRequest request, int lang) {
+    public Response<OrderStoryResponse> repeatOrder(String token, RepeatOrderRequest request, int lang) {
         UserDTO userDTO = userService.findById(authService.getUserIdByToken(token));
         OrderDTO orderDTO = orderService.findById(request.getOrderId());
 
         if (!orderDTO.getUser().getId().equals(userDTO.getId())) {
             throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "wrongOrderId"));
         }
+
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
         orderCreateRequest.setAddressId(request.getAddressId());
         orderCreateRequest.setPaymentType(request.getPaymentType());
@@ -160,13 +173,54 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
             ProductOrderList productOrderList = new ProductOrderList();
             productOrderList.setPrice(item.getProductSize().getPrice());
             productOrderList.setProductSizeId(item.getProductSize().getId());
+            productOrderList.setQuantity(item.getQuantity());
             productOrderLists.add(productOrderList);
         }
         orderCreateRequest.setProductOrderLists(productOrderLists);
 
-        create(orderCreateRequest, token, lang);
 
-        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing");
+
+        Response<OrderStoryResponse> response = create(orderCreateRequest, token, lang);
+        response.setMessage(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing"));
+
+
+        return response;
+    }
+
+    @Override
+    public OrderStoryResponse toOrderStoryResponse(Long orderId) {
+
+        OrderDTO orderDTO = orderService.findById(orderId);
+
+        OrderStoryResponse response = new OrderStoryResponse();
+
+        AddressResponse addressResponse = new AddressResponse();
+        addressResponse.setId(orderDTO.getAddress().getId());
+        addressResponse.setCity(orderDTO.getAddress().getCity());
+        addressResponse.setNum(orderDTO.getAddress().getNum());
+        addressResponse.setStreet(orderDTO.getAddress().getStreet());
+
+        response.setAddress(addressResponse);
+        response.setId(orderDTO.getId());
+        response.setOrderDate(orderDTO.getOrderDate());
+        response.setTotalPrice(orderDTO.getTotalPrice());
+
+        List<ProductResponse> productResponses = new ArrayList<>();
+        for (OrderProductDTO x: getByOrderId(orderDTO.getId())) {
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(x.getProductSize().getId());
+            productResponse.setName(x.getProductSize().getProduct().getName());
+            productResponse.setQuantity(x.getQuantity());
+            productResponse.setPrice(x.getProductSize().getPrice());
+            productResponse.setSize(x.getProductSize().getSize().getName());
+            productResponse.setCategory(x.getProductSize().getProduct().getCategory().getName());
+
+            productResponses.add(productResponse);
+        }
+        response.setProducts(productResponses);
+
+
+        return response;
     }
 
     @Override

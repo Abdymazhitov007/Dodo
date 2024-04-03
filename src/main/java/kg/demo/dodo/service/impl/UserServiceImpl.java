@@ -29,15 +29,4 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserRep, UserDTO, Use
         return mapper.toDto(rep.findByAccount_Id(accountId), context);
     }
 
-
-    @Override
-    public UserDTO update(UserUpdateRequest request) {
-
-        UserDTO userDTO = findById(request.getId());
-        userDTO.setDodoCoins(request.getDodoCoins());
-        userDTO.setName(request.getName());
-        userDTO.setPhone(request.getPhone());
-
-        return super.update(userDTO);
-    }
 }

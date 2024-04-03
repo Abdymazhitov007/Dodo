@@ -26,6 +26,8 @@ public class OrderProduct extends BaseEntity {
     @ManyToOne
     Order order;
 
+    Integer quantity;
+
     Double price;
 
 }

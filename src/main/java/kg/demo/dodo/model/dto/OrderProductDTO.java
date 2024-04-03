@@ -13,6 +13,8 @@ public class OrderProductDTO extends BaseDTO {
 
     ProductSizeDTO productSize;
     OrderDTO order;
+
+    Integer quantity;
     Double price;
 
 }

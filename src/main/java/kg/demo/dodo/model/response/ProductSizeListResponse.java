@@ -12,5 +12,5 @@ public interface ProductSizeListResponse {
     String getDescription();
     String getCategory();
     String getSize();
-    BigDecimal getPrice();
+    Double getPrice();
 }

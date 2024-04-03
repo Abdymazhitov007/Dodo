@@ -11,7 +11,5 @@ public interface UserService extends BaseService<UserDTO> {
 
     UserDTO getByAccountId(Long accountId);
 
-    UserDTO update(UserUpdateRequest request);
-
     List<UserListResponse> getUserList();
 }
