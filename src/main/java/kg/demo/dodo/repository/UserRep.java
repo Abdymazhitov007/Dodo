@@ -13,6 +13,6 @@ public interface UserRep extends BaseRep<User> {
 
     User findByAccount_Id(Long accountId);
 
-    @Query(value = "select u.id, u.name, u.phone, a.email from tb_user u join tb_account a on u.account_id = a.id where u.status = 'ACTIVE'", nativeQuery = true)
+    @Query(value = "select u.id, u.name, u.phone, a.email, u.role from tb_user u join tb_account a on u.account_id = a.id where u.status = 'ACTIVE'", nativeQuery = true)
     List<UserListResponse> findUserList();
 }

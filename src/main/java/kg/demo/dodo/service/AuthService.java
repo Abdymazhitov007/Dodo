@@ -7,8 +7,8 @@ public interface AuthService {
 
     String auth(AuthRequest request, int lang);
 
-    String validate(ValidateEmailReq request);
+    String validate(ValidateEmailReq request, int lang);
 
-    Long getUserIdByToken(String token);
+    Long getUserIdByToken(String token, int lang);
 
 }

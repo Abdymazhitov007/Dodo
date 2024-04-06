@@ -1,15 +1,15 @@
 package kg.demo.dodo.model.requests;
 
-import jakarta.validation.constraints.Email;
+import kg.demo.dodo.model.entity.enums.Role;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthRequest {
-    @Email
-    String email;
-    String name;
-    String phone;
+public class SetRoleRequest {
+
+    Long userId;
+    Role role;
+
 }

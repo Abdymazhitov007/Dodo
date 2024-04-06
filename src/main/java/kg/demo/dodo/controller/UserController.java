@@ -1,6 +1,7 @@
 package kg.demo.dodo.controller;
 
 import kg.demo.dodo.model.dto.UserDTO;
+import kg.demo.dodo.model.requests.SetRoleRequest;
 import kg.demo.dodo.model.requests.UserUpdateRequest;
 import kg.demo.dodo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +22,9 @@ public class UserController {
         return ResponseEntity.ok(service.getUserList());
     }
 
+    @PutMapping("/set-role")
+    public ResponseEntity<?> setUserRole(@RequestHeader String token, @RequestBody SetRoleRequest request, @RequestHeader int lang) {
+        return ResponseEntity.ok(service.setRole(token, request));
+    }
 
 }

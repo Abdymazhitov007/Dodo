@@ -14,4 +14,6 @@ public interface AddressRep extends BaseRep<Address> {
     @Query(value = "select a.id, concat(a.city, ', ', a.street, ', ', a.num) as address from tb_address a where a.status = 'ACTIVE' and a.user_id = :userId", nativeQuery = true)
     List<AddressListResponse> findAddressList(Long userId);
 
+    Integer countAllByUserId(Long userId);
+
 }

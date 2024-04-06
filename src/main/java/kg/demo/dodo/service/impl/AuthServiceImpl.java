@@ -2,6 +2,7 @@ package kg.demo.dodo.service.impl;
 
 import kg.demo.dodo.model.dto.AccountDTO;
 import kg.demo.dodo.model.dto.UserDTO;
+import kg.demo.dodo.model.entity.enums.Role;
 import kg.demo.dodo.model.requests.AuthRequest;
 import kg.demo.dodo.model.requests.ValidateEmailReq;
 import kg.demo.dodo.service.AccountService;
@@ -14,6 +15,7 @@ import kg.demo.dodo.util.ResourceBundleLanguage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.BadLocationException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -45,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
             newAccount.setDateTimeOfPassword(LocalDateTime.now());
             newAccount.setTempPassword(tempPsw);
 
+
             accountService.save(newAccount);
 
             UserDTO newUser = new UserDTO();
@@ -53,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
             newUser.setPhone(request.getPhone());
             newUser.setAccount(newAccount);
             newUser.setDodoCoins(0.0);
+            newUser.setRole(Role.USER);
 
             userService.save(newUser);
 
@@ -72,26 +76,27 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String validate(ValidateEmailReq request) {
+    public String validate(ValidateEmailReq request, int lang) {
         AccountDTO accountDTO = accountService.findByEmail(request.getEmail());
-        if (request.getPassword().equals(accountDTO.getTempPassword()) && !accountDTO.isApproved()) {
+        Integer password = Integer.parseInt(request.getPassword());
+        if (password.equals(accountDTO.getTempPassword()) && !accountDTO.isApproved()) {
             if (Duration.between(accountDTO.getDateTimeOfPassword(), LocalDateTime.now()).toMinutes() <= 5) {
 
                 accountDTO.setApproved(true);
                 accountService.update(accountDTO);
                 UserDTO userDTO = userService.getByAccountId(accountDTO.getId());
 
-                return jwtProvider.generateAccessToken(userDTO.getId());
+                return jwtProvider.generateAccessToken(userDTO.getId(), Role.USER);
 
-            } else throw new RuntimeException("your password has expired");
-        } else throw new RuntimeException("Incorrect password");
+            } else throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "passwordExpired"));
+        } else throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "incorrectPassword"));
 
 
     }
 
     @Override
-    public Long getUserIdByToken(String token) {
-        return jwtProvider.validateToken(token);
+    public Long getUserIdByToken(String token, int lang) {
+        return jwtProvider.validateToken(token, lang);
     }
 
 

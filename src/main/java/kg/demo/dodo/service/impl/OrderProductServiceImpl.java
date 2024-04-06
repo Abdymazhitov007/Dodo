@@ -47,7 +47,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
     @Override
     public Response<OrderStoryResponse> create(OrderCreateRequest request, String token, int lang) {
 
-        UserDTO user = userService.findById(authService.getUserIdByToken(token));
+        UserDTO user = userService.findById(authService.getUserIdByToken(token, lang));
         Double totalPrice = 0.0;
         Double discount = 0.0;
 
@@ -112,12 +112,12 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
     }
 
     @Override
-    public List<OrderStoryResponse> getOrderStory(String token, int lang) {
+    public List<OrderStoryResponse> getOrderStory(String token, int pageNum, int pageSize, int lang) {
 
-        UserDTO userDTO = userService.findById(authService.getUserIdByToken(token));
+        UserDTO userDTO = userService.findById(authService.getUserIdByToken(token, lang));
         List<OrderStoryResponse> result = new ArrayList<>();
 
-        for (OrderDTO item: orderService.getByUserId(userDTO.getId())) {
+        for (OrderDTO item: orderService.getByUserId(userDTO.getId(), pageNum, pageSize)) {
 
             OrderStoryResponse response = new OrderStoryResponse();
 
@@ -155,21 +155,21 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
 
 
     @Override
-    public Response<OrderStoryResponse> repeatOrder(String token, RepeatOrderRequest request, int lang) {
-        UserDTO userDTO = userService.findById(authService.getUserIdByToken(token));
-        OrderDTO orderDTO = orderService.findById(request.getOrderId());
+    public OrderCreateRequest repeatOrder(String token, Long orderId, int lang) {
+        UserDTO userDTO = userService.findById(authService.getUserIdByToken(token, lang));
+        OrderDTO orderDTO = orderService.findById(orderId);
 
         if (!orderDTO.getUser().getId().equals(userDTO.getId())) {
             throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "wrongOrderId"));
         }
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
-        orderCreateRequest.setAddressId(request.getAddressId());
-        orderCreateRequest.setPaymentType(request.getPaymentType());
-        orderCreateRequest.setOrderDate(request.getOrderDate());
+        orderCreateRequest.setAddressId(orderDTO.getAddress().getId());
+        orderCreateRequest.setPaymentType(orderDTO.getPaymentType());
+        orderCreateRequest.setOrderDate(LocalDateTime.now());
 
         List<ProductOrderList> productOrderLists = new ArrayList<>();
-        for (OrderProductDTO item : getAllByOrderId(request.getOrderId())) {
+        for (OrderProductDTO item : getAllByOrderId(orderId)) {
             ProductOrderList productOrderList = new ProductOrderList();
             productOrderList.setPrice(item.getProductSize().getPrice());
             productOrderList.setProductSizeId(item.getProductSize().getId());
@@ -178,13 +178,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         }
         orderCreateRequest.setProductOrderLists(productOrderLists);
 
-
-
-        Response<OrderStoryResponse> response = create(orderCreateRequest, token, lang);
-        response.setMessage(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing"));
-
-
-        return response;
+        return orderCreateRequest;
     }
 
     @Override

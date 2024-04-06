@@ -13,12 +13,12 @@ public class CategoryController {
 
     private final CategoryService service;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CategoryCreateRequest request, @RequestHeader int lang) {
         return ResponseEntity.ok(service.create(request, lang));
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity<?> getCategoryList() {
         return ResponseEntity.ok(service.getCategoryList());
     }

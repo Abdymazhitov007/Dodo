@@ -1,6 +1,7 @@
 package kg.demo.dodo.controller;
 
 
+import jakarta.validation.Valid;
 import kg.demo.dodo.model.requests.AuthRequest;
 import kg.demo.dodo.model.requests.ValidateEmailReq;
 import kg.demo.dodo.service.AuthService;
@@ -15,17 +16,17 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<?> auth(@RequestBody AuthRequest request, @RequestHeader int lang) {
+    public ResponseEntity<?> auth(@Valid @RequestBody AuthRequest request, @RequestHeader int lang) {
         return ResponseEntity.ok(authService.auth(request, lang));
     }
 
     @GetMapping("/check")
-    public ResponseEntity<?> validate(@RequestBody ValidateEmailReq emailReq) {
-        return ResponseEntity.ok(authService.validate(emailReq));
+    public ResponseEntity<?> validate(@RequestBody ValidateEmailReq emailReq, @RequestHeader int lang) {
+        return ResponseEntity.ok(authService.validate(emailReq, lang));
     }
 
-    @GetMapping("getId")
-    public ResponseEntity<?> getIdByToken(@RequestHeader String token) {
-        return ResponseEntity.ok(authService.getUserIdByToken(token));
+    @GetMapping("get-id")
+    public ResponseEntity<?> getIdByToken(@RequestHeader String token, @RequestHeader int lang) {
+        return ResponseEntity.ok(authService.getUserIdByToken(token, lang));
     }
 }

@@ -13,14 +13,14 @@ public class AddressController {
 
     private final AddressService service;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody AddressCreateRequest request, @RequestHeader int lang) {
         return ResponseEntity.ok(service.create(request, lang));
     }
 
-    @GetMapping
-    public ResponseEntity<?> getByUserId(@RequestHeader String token) {
-        return ResponseEntity.ok(service.getByUserId(token));
+    @GetMapping("/get-address")
+    public ResponseEntity<?> getByUserId(@RequestHeader String token, @RequestHeader int lang) {
+        return ResponseEntity.ok(service.getAllByUserId(token, lang));
     }
 
 

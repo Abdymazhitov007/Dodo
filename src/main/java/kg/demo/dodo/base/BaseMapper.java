@@ -6,6 +6,7 @@ package kg.demo.dodo.base;
 import jakarta.persistence.MappedSuperclass;
 import org.mapstruct.Context;
 import org.mapstruct.InheritInverseConfiguration;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 

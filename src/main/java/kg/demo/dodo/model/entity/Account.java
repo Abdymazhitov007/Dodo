@@ -1,6 +1,7 @@
 package kg.demo.dodo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import kg.demo.dodo.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,8 @@ public class Account extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
+
+    @Email
     String email;
     Integer tempPassword;
     LocalDateTime dateTimeOfPassword;

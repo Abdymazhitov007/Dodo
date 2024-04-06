@@ -15,19 +15,37 @@ public class ProductSizeController {
 
     private final ProductSizeService service;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> create(@ModelAttribute ProductCreateRequest request, @RequestParam(required = false, defaultValue = "-1") Long productId, @RequestHeader int lang) {
         return ResponseEntity.ok(service.create(request, productId, lang));
     }
 
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity<?> getProductSizeList() {
         return ResponseEntity.ok(service.getProductSizeList());
     }
 
-    @GetMapping("/product-list")
-    public ResponseEntity<?> getProductList() {
-        return ResponseEntity.ok(service.getProductList());
+    @GetMapping("/category")
+    public ResponseEntity<?> getProductByCategory(@RequestParam Long categoryId, @RequestParam int pageNum, @RequestParam int pageSize , @RequestHeader int lang) {
+        return ResponseEntity.ok(service.getProductByCategory(categoryId, pageNum, pageSize));
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getProductInfo(@RequestParam Long productId, @RequestHeader int lang) {
+        return ResponseEntity.ok(service.getFullInfoByProductId(productId));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> getProductByFilter(@RequestParam(required = false) Long sizeId,
+                                      @RequestParam(required = false) Double fromPrice,
+                                      @RequestParam(required = false) Double toPrice,
+                                      @RequestParam(required = false) String name,
+                                      @RequestParam(required = false) Long categoryId) {
+        return ResponseEntity.ok(service.filter(sizeId, fromPrice, toPrice, name, categoryId));
     }
 
 }
+
+
+
+

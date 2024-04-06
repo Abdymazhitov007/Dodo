@@ -30,10 +30,15 @@ public class AddressServiceImpl extends BaseServiceImpl<Address, AddressRep, Add
     }
 
     @Override
-    public List<AddressListResponse> getByUserId(String token) {
-        Long userId = authService.getUserIdByToken(token);
+    public List<AddressListResponse> getAllByUserId(String token, int lang) {
+        Long userId = authService.getUserIdByToken(token, lang);
         return rep.findAddressList(userId);
 
+    }
+
+    @Override
+    public Integer getNumOfAddressByUserId(Long userId) {
+        return rep.countAllByUserId(userId);
     }
 
     @Override

@@ -12,11 +12,11 @@ import java.util.List;
 public interface OrderProductService  extends BaseService<OrderProductDTO> {
     Response<OrderStoryResponse> create(OrderCreateRequest request, String token, int lang);
 
-    List<OrderStoryResponse> getOrderStory(String token, int lang);
+    List<OrderStoryResponse> getOrderStory(String token, int pageNum, int pageSize, int lang);
 
     List<OrderProductDTO> getByOrderId(Long orderId);
 
-    Response<OrderStoryResponse> repeatOrder(String token, RepeatOrderRequest request, int lang);
+    OrderCreateRequest repeatOrder(String token, Long orderId, int lang);
 
     OrderStoryResponse toOrderStoryResponse(Long orderId);
 

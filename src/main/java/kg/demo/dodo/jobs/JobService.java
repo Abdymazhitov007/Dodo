@@ -19,17 +19,7 @@ public class JobService {
 
     @Scheduled(fixedRate = 60000)
     public void changeOrderStatus(){
-
-        List<OrderDTO> orderDTO = orderService.getByOrderStatus(OrderStatus.NEW);
-        orderDTO.forEach(x -> {
-            System.out.println("Order(id = " + x.getId() + ", orderDate = " + x.getOrderDate() + ", orderStatus = " + x.getOrderStatus());
-            if (LocalDateTime.now().until(x.getOrderDate(), ChronoUnit.MINUTES) <= 30) {
-                x.setOrderStatus(OrderStatus.PREPARING);
-                orderService.update(x);
-                System.out.println("Changed: Order(id = " + x.getId() + ", orderDate = " + x.getOrderDate() + ", orderStatus = " + x.getOrderStatus());
-            }
-        });
-
+        orderService.checkOrders();
     }
 
 }

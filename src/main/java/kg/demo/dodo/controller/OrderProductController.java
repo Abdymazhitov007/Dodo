@@ -14,18 +14,18 @@ public class OrderProductController {
 
     private final OrderProductService service;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody OrderCreateRequest request, @RequestHeader String token, @RequestHeader int lang) {
         return ResponseEntity.ok(service.create(request, token, lang));
     }
 
     @GetMapping("/order-story")
-    public ResponseEntity<?> getOrderStory(@RequestHeader String token, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.getOrderStory(token, lang));
+    public ResponseEntity<?> getOrderStory(@RequestHeader String token, @RequestParam int pageNum, @RequestParam int pageSize, @RequestHeader int lang) {
+        return ResponseEntity.ok(service.getOrderStory(token, pageNum, pageSize, lang));
     }
 
     @PostMapping("/repeat-order")
-    public ResponseEntity<?> repeatOrder(@RequestHeader String token, @RequestBody RepeatOrderRequest request, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.repeatOrder(token, request, lang));
+    public ResponseEntity<?> repeatOrder(@RequestHeader String token, @RequestParam Long orderId, @RequestHeader int lang) {
+        return ResponseEntity.ok(service.repeatOrder(token, orderId, lang));
     }
 }

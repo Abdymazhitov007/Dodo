@@ -7,7 +7,9 @@ import kg.demo.dodo.model.dto.ProductDTO;
 import kg.demo.dodo.model.dto.ProductSizeDTO;
 import kg.demo.dodo.model.entity.ProductSize;
 import kg.demo.dodo.model.requests.ProductCreateRequest;
+import kg.demo.dodo.model.response.ProductFullInfoResponse;
 import kg.demo.dodo.model.response.ProductListResponse;
+import kg.demo.dodo.model.response.ProductSizeInfoResponse;
 import kg.demo.dodo.model.response.ProductSizeListResponse;
 import kg.demo.dodo.repository.ProductSizeRep;
 import kg.demo.dodo.service.CategoryService;
@@ -16,8 +18,13 @@ import kg.demo.dodo.service.ProductSizeService;
 import kg.demo.dodo.service.SizeService;
 import kg.demo.dodo.util.Language;
 import kg.demo.dodo.util.ResourceBundleLanguage;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,11 +49,46 @@ public class ProductSizeServiceImpl extends BaseServiceImpl<ProductSize, Product
     }
 
     @Override
-    public List<ProductListResponse> getProductList() {
-        return rep.findProductList();
+    public ProductFullInfoResponse getFullInfoByProductId(Long productId) {
+
+        ProductDTO productDTO = productService.findById(productId);
+
+        ProductFullInfoResponse response = new ProductFullInfoResponse();
+        response.setName(productDTO.getName());
+        response.setLogo(productDTO.getLogo());
+        response.setDescription(productDTO.getDescription());
+        response.setCategory(productDTO.getCategory().getName());
+
+        List<ProductSizeInfoResponse> productSizeInfoList = new ArrayList<>();
+        for (ProductSizeDTO item : getAllByProductId(productDTO.getId())) {
+            ProductSizeInfoResponse productSizeInfo = new ProductSizeInfoResponse();
+            productSizeInfo.setSize(item.getSize().getName());
+            productSizeInfo.setPrice(item.getPrice());
+            productSizeInfoList.add(productSizeInfo);
+        }
+
+        response.setProductSizeInfo(productSizeInfoList);
+        return response;
+    }
+
+
+    public List<ProductSizeDTO> getAllByProductId(Long productId) {
+        return mapper.toDtos(rep.findAllByProductId(productId), context);
     }
 
     @Override
+    public List<ProductSizeListResponse> filter(Long sizeId, Double fromPrice, Double toPrice, String name, Long categoryId) {
+        return rep.filter(sizeId, fromPrice, toPrice, name, categoryId);
+    }
+
+    @Override
+    public List<ProductListResponse> getProductByCategory(Long categoryId, int pageNum, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return rep.findProductListByCategoryId(categoryId, pageable);
+    }
+
+    @Override
+    @Transactional
     public String create(ProductCreateRequest request, Long productId, int lang) {
 
         ProductDTO product;
