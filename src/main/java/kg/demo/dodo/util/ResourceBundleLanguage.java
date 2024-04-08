@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import java.util.ResourceBundle;
 
 @NoArgsConstructor
-
 public class ResourceBundleLanguage {
 
     private static final ResourceBundle RU = ResourceBundle.getBundle("language.ru");

@@ -16,7 +16,4 @@ public class ProductCreateRequest {
     Long categoryId;
     MultipartFile logo;
 
-    Long sizeId;
-    Double price;
-
 }

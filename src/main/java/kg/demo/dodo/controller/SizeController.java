@@ -2,6 +2,7 @@ package kg.demo.dodo.controller;
 
 import kg.demo.dodo.service.SizeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class SizeController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestParam String name, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.create(name, lang));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(name, lang));
     }
 
     @GetMapping("/get-all")

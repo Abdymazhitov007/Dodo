@@ -7,6 +7,7 @@ import kg.demo.dodo.model.dto.ProductDTO;
 import kg.demo.dodo.model.dto.ProductSizeDTO;
 import kg.demo.dodo.model.entity.ProductSize;
 import kg.demo.dodo.model.requests.ProductCreateRequest;
+import kg.demo.dodo.model.requests.ProductSizeCreateRequest;
 import kg.demo.dodo.model.response.ProductFullInfoResponse;
 import kg.demo.dodo.model.response.ProductListResponse;
 import kg.demo.dodo.model.response.ProductSizeInfoResponse;
@@ -20,7 +21,6 @@ import kg.demo.dodo.util.Language;
 import kg.demo.dodo.util.ResourceBundleLanguage;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,14 +44,9 @@ public class ProductSizeServiceImpl extends BaseServiceImpl<ProductSize, Product
     }
 
     @Override
-    public List<ProductSizeListResponse> getProductSizeList() {
-        return rep.findProductSizeList();
-    }
+    public ProductFullInfoResponse getFullInfoByProductId(Long productId, int lang) {
 
-    @Override
-    public ProductFullInfoResponse getFullInfoByProductId(Long productId) {
-
-        ProductDTO productDTO = productService.findById(productId);
+        ProductDTO productDTO = productService.findById(productId, lang);
 
         ProductFullInfoResponse response = new ProductFullInfoResponse();
         response.setName(productDTO.getName());
@@ -82,6 +77,17 @@ public class ProductSizeServiceImpl extends BaseServiceImpl<ProductSize, Product
     }
 
     @Override
+    public String addSize(ProductSizeCreateRequest request, int lang) {
+        ProductSizeDTO productSizeDTO = new ProductSizeDTO();
+        productSizeDTO.setPrice(request.getPrice());
+        productSizeDTO.setProduct(productService.findById(request.getProductId(), lang));
+        productSizeDTO.setSize(sizeService.findById(request.getSizeId(), lang));
+        save(productSizeDTO);
+
+        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityCreated");
+    }
+
+    @Override
     public List<ProductListResponse> getProductByCategory(Long categoryId, int pageNum, int pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
         return rep.findProductListByCategoryId(categoryId, pageable);
@@ -89,31 +95,16 @@ public class ProductSizeServiceImpl extends BaseServiceImpl<ProductSize, Product
 
     @Override
     @Transactional
-    public String create(ProductCreateRequest request, Long productId, int lang) {
+    public String create(ProductCreateRequest request, int lang) {
 
-        ProductDTO product;
-
-        if (productId == -1) {
-
-            product = new ProductDTO();
+        ProductDTO product = new ProductDTO();
             product.setName(request.getName());
             product.setDescription(request.getDescription());
             product.setLogo(fileService.upload(request.getLogo()).getDownloadUri());
-            product.setCategory(categoryService.findById(request.getCategoryId()));
-            product = productService.save(product);
-        } else {
-            product = productService.findById(productId);
-        }
+            product.setCategory(categoryService.findById(request.getCategoryId(), lang));
+            productService.save(product);
 
-            ProductSizeDTO productSize = new ProductSizeDTO();
-
-            productSize.setProduct(product);
-            productSize.setSize(sizeService.findById(request.getSizeId()));
-            productSize.setPrice(request.getPrice());
-
-            save(productSize);
-
-            return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityCreated");
+        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityCreated");
 
     }
 }

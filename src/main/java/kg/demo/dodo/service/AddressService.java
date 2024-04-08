@@ -8,9 +8,8 @@ import kg.demo.dodo.model.response.AddressListResponse;
 import java.util.List;
 
 public interface AddressService extends BaseService<AddressDTO> {
-    String create(AddressCreateRequest request, int lang);
+    String create(AddressCreateRequest request, String accessToken, int lang);
 
-    List<AddressListResponse> getAllByUserId(String token, int lang);
+    List<AddressListResponse> getAllByUserId(String accessToken, int lang);
 
-    Integer getNumOfAddressByUserId(Long userId);
 }

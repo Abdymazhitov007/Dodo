@@ -1,7 +1,9 @@
 package kg.demo.dodo.repository;
 
 import kg.demo.dodo.base.BaseRep;
+import kg.demo.dodo.model.entity.OrderProduct;
 import kg.demo.dodo.model.entity.User;
+import kg.demo.dodo.model.response.AddressListResponse;
 import kg.demo.dodo.model.response.UserListResponse;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,8 @@ public interface UserRep extends BaseRep<User> {
 
     User findByAccount_Id(Long accountId);
 
-    @Query(value = "select u.id, u.name, u.phone, a.email, u.role from tb_user u join tb_account a on u.account_id = a.id where u.status = 'ACTIVE'", nativeQuery = true)
-    List<UserListResponse> findUserList();
+
+    @Query(value = "select count(*) from tb_address where user_id = :userId and status = 'ACTIVE'", nativeQuery = true)
+    Integer countAddressByUserId(Long userId);
+
 }

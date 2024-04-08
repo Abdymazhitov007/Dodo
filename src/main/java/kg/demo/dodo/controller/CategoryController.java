@@ -3,6 +3,7 @@ package kg.demo.dodo.controller;
 import kg.demo.dodo.model.requests.CategoryCreateRequest;
 import kg.demo.dodo.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CategoryCreateRequest request, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.create(request, lang));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request, lang));
     }
 
     @GetMapping("/get-all")

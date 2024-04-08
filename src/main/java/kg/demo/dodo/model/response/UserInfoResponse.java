@@ -14,9 +14,7 @@ public class UserInfoResponse {
     String email;
     Double dodoCoins;
     Integer numOfOrders;
-    List<OrderStoryResponse> orderList;
     Integer numOfAddress;
-    List<AddressListResponse> addressList;
 
 
 }

@@ -40,6 +40,7 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderRep, OrderDTO,
         return rep.countAllByUserId(userId);
     }
 
+
     @Override
     public void checkOrders() {
         List<OrderDTO> orderDTO = getByOrderStatus(OrderStatus.NEW);

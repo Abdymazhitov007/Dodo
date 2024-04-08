@@ -1,6 +1,9 @@
 package kg.demo.dodo.base;
 
+import jakarta.persistence.EntityNotFoundException;
 import kg.demo.dodo.model.entity.enums.Status;
+import kg.demo.dodo.util.Language;
+import kg.demo.dodo.util.ResourceBundleLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.MappedSuperclass;
@@ -31,8 +34,8 @@ public abstract class BaseServiceImpl<E extends BaseEntity,
     }
 
     @Override
-    public D findById(Long id) {
-        return mapper.toDto(rep.findById(id).orElseThrow(()->new RuntimeException("fjfjjf")),context);
+    public D findById(Long id, int lang) {
+        return mapper.toDto(rep.findById(id).orElseThrow(()-> new EntityNotFoundException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityNotFound"))),context);
     }
 
     @Override

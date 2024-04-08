@@ -26,7 +26,7 @@ public class SizeServiceImpl extends BaseServiceImpl<Size, SizeRep, SizeDTO, Siz
         dto.setName(name);
         save(dto);
 
-        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "ready");
+        return ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "entityCreated");
     }
 
     @Override

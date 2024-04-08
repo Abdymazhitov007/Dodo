@@ -1,10 +1,10 @@
 package kg.demo.dodo.controller;
 
 import kg.demo.dodo.model.requests.ProductCreateRequest;
-import kg.demo.dodo.service.ProductService;
+import kg.demo.dodo.model.requests.ProductSizeCreateRequest;
 import kg.demo.dodo.service.ProductSizeService;
-import kg.demo.dodo.service.SizeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,31 +16,36 @@ public class ProductSizeController {
     private final ProductSizeService service;
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@ModelAttribute ProductCreateRequest request, @RequestParam(required = false, defaultValue = "-1") Long productId, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.create(request, productId, lang));
+    public ResponseEntity<?> create(@ModelAttribute ProductCreateRequest request, @RequestHeader int lang) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request, lang));
     }
 
-    @GetMapping("/get-all")
-    public ResponseEntity<?> getProductSizeList() {
-        return ResponseEntity.ok(service.getProductSizeList());
+    @PostMapping("/add-size")
+    public ResponseEntity<?> addSize(@RequestBody ProductSizeCreateRequest request, @RequestHeader int lang) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addSize(request, lang));
     }
+
 
     @GetMapping("/category")
-    public ResponseEntity<?> getProductByCategory(@RequestParam Long categoryId, @RequestParam int pageNum, @RequestParam int pageSize , @RequestHeader int lang) {
+    public ResponseEntity<?> getProductByCategory(@RequestParam Long categoryId,
+                                                  @RequestParam int pageNum,
+                                                  @RequestParam int pageSize,
+                                                  @RequestHeader int lang) {
         return ResponseEntity.ok(service.getProductByCategory(categoryId, pageNum, pageSize));
     }
 
     @GetMapping("/info")
-    public ResponseEntity<?> getProductInfo(@RequestParam Long productId, @RequestHeader int lang) {
-        return ResponseEntity.ok(service.getFullInfoByProductId(productId));
+    public ResponseEntity<?> getProductInfo(@RequestParam Long productId,
+                                            @RequestHeader int lang) {
+        return ResponseEntity.ok(service.getFullInfoByProductId(productId, lang));
     }
 
     @GetMapping("/filter")
     public ResponseEntity<?> getProductByFilter(@RequestParam(required = false) Long sizeId,
-                                      @RequestParam(required = false) Double fromPrice,
-                                      @RequestParam(required = false) Double toPrice,
-                                      @RequestParam(required = false) String name,
-                                      @RequestParam(required = false) Long categoryId) {
+                                                @RequestParam(required = false) Double fromPrice,
+                                                @RequestParam(required = false) Double toPrice,
+                                                @RequestParam(required = false) String name,
+                                                @RequestParam(required = false) Long categoryId) {
         return ResponseEntity.ok(service.filter(sizeId, fromPrice, toPrice, name, categoryId));
     }
 

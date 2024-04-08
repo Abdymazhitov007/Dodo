@@ -10,15 +10,15 @@ import kg.demo.dodo.model.response.Response;
 import java.util.List;
 
 public interface OrderProductService  extends BaseService<OrderProductDTO> {
-    Response<OrderStoryResponse> create(OrderCreateRequest request, String token, int lang);
+    Response<OrderStoryResponse> create(OrderCreateRequest request, String accessToken, int lang);
 
-    List<OrderStoryResponse> getOrderStory(String token, int pageNum, int pageSize, int lang);
+    List<OrderStoryResponse> getOrderStory(String accessToken, int pageNum, int pageSize, int lang);
 
     List<OrderProductDTO> getByOrderId(Long orderId);
 
-    OrderCreateRequest repeatOrder(String token, Long orderId, int lang);
+    OrderCreateRequest repeatOrder(String accessToken, Long orderId, int lang);
 
-    OrderStoryResponse toOrderStoryResponse(Long orderId);
+    OrderStoryResponse toOrderStoryResponse(Long orderId, int lang);
 
     List<OrderProductDTO> getAllByOrderId(Long orderId);
 }

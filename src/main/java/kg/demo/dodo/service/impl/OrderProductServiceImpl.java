@@ -1,13 +1,15 @@
 package kg.demo.dodo.service.impl;
 
 import kg.demo.dodo.base.BaseServiceImpl;
-import kg.demo.dodo.model.entity.enums.OrderStatus;
 import kg.demo.dodo.mapper.OrderProductMapper;
-import kg.demo.dodo.model.dto.*;
+import kg.demo.dodo.model.dto.OrderDTO;
+import kg.demo.dodo.model.dto.OrderProductDTO;
+import kg.demo.dodo.model.dto.ProductSizeDTO;
+import kg.demo.dodo.model.dto.UserDTO;
 import kg.demo.dodo.model.entity.OrderProduct;
+import kg.demo.dodo.model.entity.enums.OrderStatus;
 import kg.demo.dodo.model.requests.OrderCreateRequest;
 import kg.demo.dodo.model.requests.ProductOrderList;
-import kg.demo.dodo.model.requests.RepeatOrderRequest;
 import kg.demo.dodo.model.response.AddressResponse;
 import kg.demo.dodo.model.response.OrderStoryResponse;
 import kg.demo.dodo.model.response.ProductResponse;
@@ -24,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-
 public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, OrderProductRep, OrderProductDTO, OrderProductMapper> implements OrderProductService {
 
     private final AuthService authService;
@@ -32,8 +33,6 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
     private final UserService userService;
     private final ProductSizeService productSizeService;
     private final AddressService addressService;
-
-
 
     public OrderProductServiceImpl(OrderProductRep rep, OrderProductMapper mapper, AuthService authService, OrderService orderService, UserService userService, ProductSizeService productSizeService, AddressService addressService, ProductService productService) {
         super(rep, mapper);
@@ -45,9 +44,9 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
     }
 
     @Override
-    public Response<OrderStoryResponse> create(OrderCreateRequest request, String token, int lang) {
+    public Response<OrderStoryResponse> create(OrderCreateRequest request, String accessToken, int lang) {
 
-        UserDTO user = userService.findById(authService.getUserIdByToken(token, lang));
+        UserDTO user = userService.findById(authService.getUserIdByToken(accessToken, lang), lang);
         Double totalPrice = 0.0;
         Double discount = 0.0;
 
@@ -56,7 +55,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         order.setUser(user);
         order.setOrderDate(request.getOrderDate());
         order.setPaymentType(request.getPaymentType());
-        order.setAddress(addressService.findById(request.getAddressId()));
+        order.setAddress(addressService.findById(request.getAddressId(), lang));
 
         if (LocalDateTime.now().isBefore(request.getOrderDate())) {
             if (LocalDateTime.now().until(request.getOrderDate(), ChronoUnit.MINUTES) <= 30) {
@@ -69,7 +68,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         }
 
         for (ProductOrderList item : request.getProductOrderLists()) {
-            ProductSizeDTO product = productSizeService.findById(item.getProductSizeId());
+            ProductSizeDTO product = productSizeService.findById(item.getProductSizeId(), lang);
             if (item.getPrice() == 0) {
                 discount += product.getPrice() / 10 + product.getPrice();
                 order.setDiscount(order.getDiscount() + product.getPrice());
@@ -87,7 +86,6 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
 
         user.setDodoCoins(user.getDodoCoins() - discount + order.getDodoCoins());
 
-
         userService.save(user);
 
         OrderDTO orderFromDB = orderService.save(order);
@@ -97,7 +95,7 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
             orderProductDTO.setOrder(orderFromDB);
             orderProductDTO.setQuantity(item.getQuantity());
 
-            ProductSizeDTO product = productSizeService.findById(item.getProductSizeId());
+            ProductSizeDTO product = productSizeService.findById(item.getProductSizeId(), lang);
             orderProductDTO.setProductSize(product);
             orderProductDTO.setPrice(item.getPrice());
 
@@ -105,16 +103,16 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
         }
 
         Response<OrderStoryResponse> response = new Response<>();
-        response.setData(toOrderStoryResponse(orderFromDB.getId()));
+        response.setData(toOrderStoryResponse(orderFromDB.getId(), lang));
         response.setMessage(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "orderPreparing"));
 
         return response;
     }
 
     @Override
-    public List<OrderStoryResponse> getOrderStory(String token, int pageNum, int pageSize, int lang) {
+    public List<OrderStoryResponse> getOrderStory(String accessToken, int pageNum, int pageSize, int lang) {
 
-        UserDTO userDTO = userService.findById(authService.getUserIdByToken(token, lang));
+        UserDTO userDTO = userService.findById(authService.getUserIdByToken(accessToken, lang), lang);
         List<OrderStoryResponse> result = new ArrayList<>();
 
         for (OrderDTO item: orderService.getByUserId(userDTO.getId(), pageNum, pageSize)) {
@@ -155,9 +153,9 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
 
 
     @Override
-    public OrderCreateRequest repeatOrder(String token, Long orderId, int lang) {
-        UserDTO userDTO = userService.findById(authService.getUserIdByToken(token, lang));
-        OrderDTO orderDTO = orderService.findById(orderId);
+    public OrderCreateRequest repeatOrder(String accessToken, Long orderId, int lang) {
+        UserDTO userDTO = userService.findById(authService.getUserIdByToken(accessToken, lang), lang);
+        OrderDTO orderDTO = orderService.findById(orderId, lang);
 
         if (!orderDTO.getUser().getId().equals(userDTO.getId())) {
             throw new RuntimeException(ResourceBundleLanguage.periodMessage(Language.getLanguage(lang), "wrongOrderId"));
@@ -182,9 +180,9 @@ public class OrderProductServiceImpl extends BaseServiceImpl<OrderProduct, Order
     }
 
     @Override
-    public OrderStoryResponse toOrderStoryResponse(Long orderId) {
+    public OrderStoryResponse toOrderStoryResponse(Long orderId, int lang) {
 
-        OrderDTO orderDTO = orderService.findById(orderId);
+        OrderDTO orderDTO = orderService.findById(orderId, lang);
 
         OrderStoryResponse response = new OrderStoryResponse();
 
