@@ -4,7 +4,7 @@ public enum PaymentType {
 
     CASH("Наличные"),
     CASHLESS("Базналичные"),
-    CAR("Оплата картой курьеру");
+    CARD("Оплата картой курьеру");
 
     private final String def;
 

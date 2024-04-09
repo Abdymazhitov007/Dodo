@@ -10,6 +10,6 @@ import java.util.List;
 public interface AddressService extends BaseService<AddressDTO> {
     String create(AddressCreateRequest request, String accessToken, int lang);
 
-    List<AddressListResponse> getAllByUserId(String accessToken, int lang);
+    List<AddressListResponse> getAllByToken(String accessToken, int lang);
 
 }

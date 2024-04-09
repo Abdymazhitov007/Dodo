@@ -94,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
 
         AccountDTO accountDTO = accountService.findByEmail(request.getEmail());
 
-        if (request.getPassword().equals(accountDTO.getTempPassword()) && !accountDTO.isApproved()) {
+        if (request.getTempPassword().equals(accountDTO.getTempPassword()) && !accountDTO.isApproved()) {
             if (Duration.between(accountDTO.getDateTimeOfPassword(), LocalDateTime.now()).toMinutes() <= 5) {
 
                 accountDTO.setApproved(true);
